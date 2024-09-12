@@ -1,12 +1,10 @@
 # Foundations Project
 
-This is your first individual project at Revature. You are tasked with creating a ticketing reimbursement system for a company. To have an idea of what is expected of you, watch the following below:
+You are tasked with creating a ticketing reimbursement system for a company. To have an idea of what is expected of you, watch the following below:
 
 [Project Completion Demo](https://drive.google.com/file/d/1DmA__wMgUeRsaG-Ad4zYe8HUH6OBHB3J/view?usp=sharing)
 
-This project will require you to use technologies that you may have not come across yet but will in the course of training. Make sure to plan ahead, and have a clear idea of what you need for the project and what you can complete with what you have learnt. Do not leave this project to after you have learnt all the technologies. The required features must be completed and presented during a 5 minute timeslot for presentation of the project and 5 minutes for Q/A. Extension features are available for undertaking once the required features are completed, but they do not contribute to your projects completion.
-
-## Required Technolgies
+## Technolgies
 
 - NodeJS
 - DynamoDB
@@ -17,17 +15,7 @@ This project will require you to use technologies that you may have not come acr
 
 ## Preliminary Work
 
-### GitHub Repository
-
-- Setup personal repository for Foundation Project on GitHub
-- Clone the repository to your computer and initialize it
-- Create your first commit on you computer
-- Complete your first push to the repository on GitHub
-
 ### Use Case Design
-
-- Understand what your application is meant to do
-- Review the diagrams
 
 ![Activity Diagram](images/Activity-Diagram.png)
 ![State Chart Diagram](images/State-Chart-Diagram.png)
