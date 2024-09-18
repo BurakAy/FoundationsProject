@@ -1,36 +1,47 @@
 const express = require("express");
+const { login, register } = require("./Service/UserService");
 const app = express();
 const port = 3000;
 
-app.get("/user/:userName", (req, res) => {
+app.use(express.json());
+
+app.post("/login", async (req, res) => {
+  const loggedIn = await login(req.body);
+  if (loggedIn) {
+    res.status(200);
+    res.send("Login successful");
+  } else {
+    res.status(401);
+    res.send("Login failed, check user credentials");
+  }
+});
+
+app.post("/register", async (req, res) => {
+  const registered = await register(req.body);
+  if (registered) {
+    res.status(200);
+    res.send("Registration successful");
+  } else {
+    res.status(409);
+    res.send("Username already exists");
+  }
+});
+
+app.get("/employee-tickets/:userName", (req, res) => {
   res.send(req.params);
 });
 
-app.get("/submissions/:userName", (req, res) => {
-  res.send(req.params);
-});
-
-app.get("/pending", (req, res) => {
+app.get("/pending-tickets", (req, res) => {
   res.send("pending");
-});
-
-app.post("/login", (req, res) => {
-  res.send("login");
-});
-
-app.post("/register", (req, res) => {
-  res.send("register");
 });
 
 app.post("/submit-ticket", (req, res) => {
   res.send("submit ticket");
 });
 
-app.put("/process-ticket", (req, res) => {
+app.put("/process-ticket/:ticketId", (req, res) => {
   res.send("process ticket");
 });
-
-app.delete("/remove-ticket", (req, res) => {});
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
