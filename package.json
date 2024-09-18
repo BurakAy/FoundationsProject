@@ -10,6 +10,8 @@
   "author": "Burak",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.651.1",
+    "@aws-sdk/lib-dynamodb": "^3.651.1",
     "express": "^4.21.0"
   },
   "devDependencies": {
