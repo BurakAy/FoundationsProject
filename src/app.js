@@ -1,5 +1,6 @@
 const express = require("express");
 const { login, register } = require("./Service/UserService");
+const { submitTicket } = require("./Service/TicketService");
 const app = express();
 const port = 3000;
 
@@ -27,16 +28,18 @@ app.post("/register", async (req, res) => {
   }
 });
 
+app.post("/submit-ticket", async (req, res) => {
+  const ticket = await submitTicket(req.body);
+  res.status(ticket.status);
+  res.send(ticket.message);
+});
+
 app.get("/employee-tickets/:userName", (req, res) => {
   res.send(req.params);
 });
 
 app.get("/pending-tickets", (req, res) => {
   res.send("pending");
-});
-
-app.post("/submit-ticket", (req, res) => {
-  res.send("submit ticket");
 });
 
 app.put("/process-ticket/:ticketId", (req, res) => {
@@ -46,3 +49,7 @@ app.put("/process-ticket/:ticketId", (req, res) => {
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
+
+/* TEST DATA
+{"amount": 120.77, "description": "business meeting - dinner", "userName": "burak"}
+*/
