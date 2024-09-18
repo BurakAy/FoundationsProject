@@ -8,12 +8,13 @@ const {
   PutCommand,
   GetCommand
 } = require("@aws-sdk/lib-dynamodb");
+const uuid = require("uuid");
 
 const client = new DynamoDBClient({ region: "us-west-1" });
 const docClient = DynamoDBDocumentClient.from(client);
 
 const TableName = "User";
-let userId = 1;
+let userId = uuid.v4();
 
 async function userInfo(userName) {}
 
@@ -42,13 +43,12 @@ async function createAccount(username, pass) {
       userName: username,
       password: pass,
       role: "employee",
-      userId: (userId += 1)
+      userId: userId
     },
     ConditionExpression: "attribute_not_exists(userName)"
   });
   try {
     const response = await docClient.send(command);
-    console.log("RESPONSE: ", response.error);
     return response;
   } catch (err) {
     if (err instanceof ConditionalCheckFailedException) {
