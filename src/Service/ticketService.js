@@ -45,9 +45,33 @@ async function processTicket(ticket) {
   return response;
 }
 
-function ticketsPending(status) {}
+async function ticketsPending() {
+  const tickets = await pendingTickets();
+  const response = { message: `${tickets.Count} pending` };
+  if (tickets.Count > 0) {
+    const pendingTickets = [];
+    for (const item of tickets.Items) {
+      const ticket = {};
+      for (const [key, value] of Object.entries(item)) {
+        if (value.S != undefined) {
+          ticket[key] = value.S;
+        }
+        if (value.N != undefined) {
+          ticket[key] = value.N;
+        }
+      }
+      pendingTickets.push(ticket);
+    }
+    response.pending = pendingTickets;
+    return response;
+  }
+  return response;
+}
 
-function previousTickets(userName) {}
+async function previousTickets(userName) {
+  const tickets = await employeeTickets(userName);
+  return tickets;
+}
 
 module.exports = {
   submitTicket,
