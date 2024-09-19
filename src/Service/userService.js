@@ -6,10 +6,12 @@ async function login(userCred) {
 
   if (userName && userPass) {
     const loggedIn = await userLogin(userName, userPass);
-    return loggedIn.length ? true : false;
+    return loggedIn > 0
+      ? { status: 200, message: "Login successful" }
+      : { status: 401, message: "Login failed, check user credentials" };
   }
 
-  return "Login failed, missing credentials";
+  return { status: 401, message: "Login failed, missing credentials" };
 }
 
 async function register(userCred) {
@@ -18,10 +20,12 @@ async function register(userCred) {
 
   if (userName && userPass) {
     const registered = await createAccount(userName, userPass);
-    return registered;
+    return registered
+      ? { status: 200, message: "Registration successful" }
+      : { status: 409, message: "Username already exists" };
   }
 
-  return "Registration failed, missing credentials";
+  return { status: 400, message: "Registration failed, missing credentials" };
 }
 
 module.exports = { login, register };
