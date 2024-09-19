@@ -30,7 +30,7 @@ async function userLogin(userName, pass) {
   });
   try {
     const response = await docClient.send(command);
-    return response.Items;
+    return response.Count;
   } catch (err) {
     console.error(err);
   }
