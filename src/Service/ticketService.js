@@ -70,7 +70,25 @@ async function ticketsPending() {
 
 async function previousTickets(userName) {
   const tickets = await employeeTickets(userName);
-  return tickets;
+  const response = { message: `${tickets.Count} tickets` };
+  if (tickets.Count > 0) {
+    const submissions = [];
+    for (const item of tickets.Items) {
+      const ticket = {};
+      for (const [key, value] of Object.entries(item)) {
+        if (value.S != undefined) {
+          ticket[key] = value.S;
+        }
+        if (value.N != undefined) {
+          ticket[key] = value.N;
+        }
+      }
+      submissions.push(ticket);
+    }
+    response.submitted = submissions;
+    return response;
+  }
+  return response;
 }
 
 module.exports = {
