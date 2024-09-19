@@ -16,7 +16,6 @@ async function submitTicket(ticket) {
       response.status = 400;
       response.message = "Failed to submit ticket";
     }
-
     return response;
   }
 
@@ -25,7 +24,26 @@ async function submitTicket(ticket) {
   return response;
 }
 
-function processTicket(ticketId) {}
+async function processTicket(ticket) {
+  const response = { status: null, message: "", updatedTicket: null };
+  if (ticket.ticketId) {
+    const processedTicket = await updateTicket(ticket);
+    if (processedTicket) {
+      response.status = processedTicket.$metadata.httpStatusCode;
+      response.message = "Ticket successfully processed";
+      response.updatedTicket = processedTicket.Attributes;
+    } else {
+      response.status = 409;
+      response.message =
+        "Cannot process tickets that have already been approved/denied";
+    }
+    return response;
+  }
+
+  response.status = 400;
+  response.message = "ticketId needed to process ticket";
+  return response;
+}
 
 function ticketsPending(status) {}
 
