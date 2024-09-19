@@ -9,14 +9,13 @@ const {
   GetCommand
 } = require("@aws-sdk/lib-dynamodb");
 const uuid = require("uuid");
+const logger = require("../util/logger");
 
 const client = new DynamoDBClient({ region: "us-west-1" });
 const docClient = DynamoDBDocumentClient.from(client);
 
 const TableName = "User";
 let userId = uuid.v4();
-
-async function userInfo(userName) {}
 
 async function userLogin(userName, pass) {
   const command = new QueryCommand({
@@ -30,9 +29,10 @@ async function userLogin(userName, pass) {
   });
   try {
     const response = await docClient.send(command);
+    logger.info(`Login query: ${response}`);
     return response.Count;
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 }
 
@@ -49,12 +49,14 @@ async function createAccount(username, pass) {
   });
   try {
     const response = await docClient.send(command);
+    logger.info(`Created a new account: ${response}`);
     return response;
   } catch (err) {
     if (err instanceof ConditionalCheckFailedException) {
+      logger.info(`Account not created, userName already exists`);
       return false;
     } else {
-      console.log(err);
+      logger.log(err);
     }
   }
 }

@@ -6,10 +6,10 @@ const {
 const {
   DynamoDBDocumentClient,
   PutCommand,
-  UpdateCommand,
-  DeleteCommand
+  UpdateCommand
 } = require("@aws-sdk/lib-dynamodb");
 const uuid = require("uuid");
+const logger = require("../util/logger");
 
 const client = new DynamoDBClient({ region: "us-west-1" });
 const docClient = DynamoDBDocumentClient.from(client);
@@ -24,9 +24,10 @@ async function createTicket(ticket) {
   });
   try {
     const response = await docClient.send(command);
+    logger.info(`Created ticket: ${response}`);
     return response.$metadata.httpStatusCode;
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 }
 
@@ -47,12 +48,13 @@ async function updateTicket(ticket) {
   });
   try {
     const response = await docClient.send(command);
+    logger.info(`Updated ticket: ${response}`);
     return response;
   } catch (err) {
     if (err instanceof ConditionalCheckFailedException) {
       return false;
     } else {
-      console.log(err);
+      logger.error(err);
     }
   }
 }
@@ -70,9 +72,10 @@ async function pendingTickets() {
   });
   try {
     const response = await docClient.send(command);
+    logger.info(`Scanned pending tickets`);
     return response;
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 }
 
@@ -85,14 +88,12 @@ async function employeeTickets(userName) {
   });
   try {
     const response = await docClient.send(command);
-    console.log(response);
-    return response.Items;
+    logger.info(`Scanned employee tickets`);
+    return response;
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 }
-
-async function removeTicket(ticketId) {}
 
 module.exports = {
   createTicket,
