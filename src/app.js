@@ -1,6 +1,7 @@
 const express = require("express");
 const { login, register } = require("./Service/UserService");
-const { submitTicket } = require("./Service/TicketService");
+const { submitTicket, processTicket } = require("./Service/TicketService");
+
 const app = express();
 const port = 3000;
 
@@ -34,16 +35,19 @@ app.post("/submit-ticket", async (req, res) => {
   res.send(ticket.message);
 });
 
+app.put("/process-ticket", async (req, res) => {
+  const ticket = await processTicket(req.body);
+  console.log(ticket);
+  res.status(ticket.status);
+  res.send({ message: ticket.message, updatedTicket: ticket.updatedTicket });
+});
+
 app.get("/employee-tickets/:userName", (req, res) => {
   res.send(req.params);
 });
 
 app.get("/pending-tickets", (req, res) => {
   res.send("pending");
-});
-
-app.put("/process-ticket/:ticketId", (req, res) => {
-  res.send("process ticket");
 });
 
 app.listen(port, () => {
