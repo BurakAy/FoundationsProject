@@ -1,4 +1,8 @@
-const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
+const {
+  DynamoDBClient,
+  ScanCommand,
+  ConditionalCheckFailedException
+} = require("@aws-sdk/client-dynamodb");
 const {
   DynamoDBDocumentClient,
   PutCommand,
@@ -26,7 +30,32 @@ async function createTicket(ticket) {
   }
 }
 
-async function updateTicket(ticketId) {}
+async function updateTicket(ticket) {
+  const command = new UpdateCommand({
+    TableName,
+    Key: { ticketId: ticket.ticketId },
+    UpdateExpression: "SET #attrName=:attrValue",
+    ConditionExpression:
+      "#attrName <> :statusValue1 AND #attrName <> :statusValue2",
+    ExpressionAttributeNames: { "#attrName": "status" },
+    ExpressionAttributeValues: {
+      ":attrValue": ticket.status,
+      ":statusValue1": "approved",
+      ":statusValue2": "denied"
+    },
+    ReturnValues: "ALL_NEW"
+  });
+  try {
+    const response = await docClient.send(command);
+    return response;
+  } catch (err) {
+    if (err instanceof ConditionalCheckFailedException) {
+      return false;
+    } else {
+      console.log(err);
+    }
+  }
+}
 
 async function removeTicket(ticketId) {}
 
