@@ -57,11 +57,42 @@ async function updateTicket(ticket) {
   }
 }
 
+async function pendingTickets() {
+  const command = new ScanCommand({
+    TableName,
+    FilterExpression: "#status = :status",
+    ExpressionAttributeNames: {
+      "#status": "status"
+    },
+    ExpressionAttributeValues: {
+      ":status": { S: "pending" }
+    }
+  });
+  try {
+    const response = await docClient.send(command);
+    return response;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function employeeTickets(userName) {
+  const command = new ScanCommand({
+    TableName,
+    FilterExpression: "#userName = :userName",
+    ExpressionAttributeNames: { "#userName": "userName" },
+    ExpressionAttributeValues: { ":userName": { S: userName } }
+  });
+  try {
+    const response = await docClient.send(command);
+    console.log(response);
+    return response.Items;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 async function removeTicket(ticketId) {}
-
-async function pendingTickets(status) {}
-
-async function employeeTickets(userName) {}
 
 module.exports = {
   createTicket,
