@@ -7,13 +7,15 @@ const {
 const {
   createTicket,
   updateTicket,
-  pendingTickets
+  pendingTickets,
+  employeeTickets
 } = require("../src/DAO/TicketDAO");
 
 jest.mock("../src/DAO/TicketDAO", () => ({
   updateTicket: jest.fn(),
   createTicket: jest.fn(),
-  pendingTickets: jest.fn()
+  pendingTickets: jest.fn(),
+  employeeTickets: jest.fn()
 }));
 
 describe("Ticket submission functionality tests", () => {
@@ -125,6 +127,10 @@ describe("Ticket approval/denial functionality tests", () => {
 });
 
 describe("Pending tickets retrieval functionality tests", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   test("should return a message with 0 pending tickets", async () => {
     pendingTickets.mockResolvedValue({ Count: 0, Items: [] });
 
@@ -161,4 +167,41 @@ describe("Pending tickets retrieval functionality tests", () => {
 
   //   expect(result).toEqual({ message: "0 pending" });
   // });
+});
+
+describe("Employee ticket history retrieval functionality tests", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("should return a message with 0 tickets", async () => {
+    employeeTickets.mockResolvedValue({ Count: 0, Items: [] });
+
+    const mockUserName = "burak";
+    const result = await previousTickets(mockUserName);
+
+    expect(result).toEqual({ message: "0 tickets" });
+  });
+
+  test("should return a message with previously submitted tickets", async () => {
+    const mockUserName = "burak";
+    const mockTickets = {
+      Count: 2,
+      Items: [
+        { id: { S: "1" }, status: { S: "pending" } },
+        { id: { S: "2" }, status: { S: "approved" } }
+      ]
+    };
+    employeeTickets.mockResolvedValue(mockTickets);
+
+    const result = await previousTickets(mockUserName);
+
+    expect(result).toEqual({
+      message: "2 tickets",
+      submitted: [
+        { id: "1", status: "pending" },
+        { id: "2", status: "approved" }
+      ]
+    });
+  });
 });
