@@ -11,8 +11,6 @@ const {
   employeeTickets
 } = require("../DAO/TicketDAO");
 
-const secretKey = process.env.SECRET_KEY;
-
 async function submitTicket(ticket) {
   const response = { status: null, message: "" };
   if (ticket.amount && ticket.description && ticket.userName) {
@@ -136,6 +134,7 @@ async function userAuthentication(authType) {
 }
 
 async function decodeJWT(token) {
+  const secretKey = process.env.SECRET_KEY;
   try {
     const user = jwt.verify(token, secretKey);
     return user;

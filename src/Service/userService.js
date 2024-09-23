@@ -6,9 +6,8 @@ dotenv.config({ path: "./.env" });
 
 const { userLogin, createAccount } = require("../DAO/UserDAO");
 
-const secretKey = process.env.SECRET_KEY;
-
 async function login(userCred) {
+  const secretKey = process.env.SECRET_KEY;
   const userName = userCred.userName;
   const userPass = userCred.password;
   const response = {};
