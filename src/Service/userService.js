@@ -1,17 +1,54 @@
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+const logger = require("../util/logger");
+const fs = require("fs");
+dotenv.config({ path: "./.env" });
+
 const { userLogin, createAccount } = require("../DAO/UserDAO");
+
+const secretKey = process.env.SECRET_KEY;
 
 async function login(userCred) {
   const userName = userCred.userName;
   const userPass = userCred.password;
+  const response = {};
 
   if (userName && userPass) {
     const loggedIn = await userLogin(userName, userPass);
-    return loggedIn > 0
-      ? { status: 200, message: "Login successful" }
-      : { status: 401, message: "Login failed, check user credentials" };
+
+    if (loggedIn.Count > 0) {
+      const token = jwt.sign(
+        {
+          userName: loggedIn.Items[0].userName.S,
+          role: loggedIn.Items[0].role.S
+        },
+        secretKey,
+        {
+          expiresIn: "30m"
+        }
+      );
+      response.token = token;
+
+      fs.writeFile("src/Controller/token.txt", token, (err) => {
+        logger.info("jwt token created and written to file");
+        if (err) {
+          logger.error(err);
+        }
+      });
+
+      response.status = 200;
+      response.message = `Login successful for: ${loggedIn.Items[0].userName.S}`;
+    } else {
+      response.status = 401;
+      response.message = "Login failed, check user credentials";
+    }
+
+    return response;
   }
 
-  return { status: 401, message: "Login failed, missing credentials" };
+  response.status = 401;
+  response.message = "Login failed, missing credentials";
+  return response;
 }
 
 async function register(userCred) {
