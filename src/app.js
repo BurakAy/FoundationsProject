@@ -1,7 +1,6 @@
 const express = require("express");
 const logger = require("./util/logger");
 const systemRouter = require("./Controller/SystemRouter");
-const jwt = require("jsonwebtoken");
 const app = express();
 const port = 3000;
 
@@ -19,5 +18,7 @@ app.listen(port, () => {
 });
 
 /* TEST DATA
-{"amount": 120.77, "description": "business meeting - dinner", "userName": "burak"}
+{ "userName": "burak", "password": "abc123" }
+{ "amount": 120.77, "description": "business meeting - dinner", "userName": "burak" }
+{ "ticketId": "1a6d7879-cf4e-47ca-a569-ec4190d3ea05", "status": "approved"  }
 */
