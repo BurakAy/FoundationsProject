@@ -29,8 +29,8 @@ async function userLogin(userName, pass) {
   });
   try {
     const response = await docClient.send(command);
-    logger.info(`Login query: ${response}`);
-    return response.Count;
+    logger.info(`Login query: ${JSON.stringify(response.Items[0])}`);
+    return response;
   } catch (err) {
     logger.error(err);
   }
