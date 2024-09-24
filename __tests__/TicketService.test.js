@@ -156,12 +156,12 @@ describe("Pending tickets retrieval functionality tests", () => {
 
   test("should return a message with 0 pending tickets", async () => {
     pendingTickets.mockResolvedValue({ Count: 0, Items: [] });
-
-    const result = await ticketsPending();
     fs.readFileSync.mockReturnValue("valid.jwt.token");
     jwt.verify.mockReturnValue({ userName: "burak", role: "manager" });
 
-    expect(result).toEqual({ message: "0 pending" });
+    const result = await ticketsPending();
+
+    expect(result).toEqual({ message: "0 pending", status: 200 });
   });
 
   test("should return a message with pending tickets", async () => {
@@ -187,14 +187,6 @@ describe("Pending tickets retrieval functionality tests", () => {
       status: 200
     });
   });
-
-  // test("should handle errors from pendingTickets", async () => {
-  //   pendingTickets.mockRejectedValue(new Error("Database error"));
-
-  //   const result = await ticketsPending();
-
-  //   expect(result).toEqual({ message: "0 pending" });
-  // });
 });
 
 describe("Employee ticket history retrieval functionality tests", () => {
