@@ -28,7 +28,7 @@ async function submitTicket(ticket) {
   }
 
   response.status = 400;
-  response.message = "Tickets must have an amount, description, and username";
+  response.message = "Tickets must have an amount and description";
   return response;
 }
 
