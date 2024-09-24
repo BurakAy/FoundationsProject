@@ -1,8 +1,11 @@
+const fs = require("fs");
+const jwt = require("jsonwebtoken");
 const {
   submitTicket,
   processTicket,
   ticketsPending,
-  previousTickets
+  previousTickets,
+  userAuthentication
 } = require("../src/Service/TicketService");
 const {
   createTicket,
@@ -10,6 +13,12 @@ const {
   pendingTickets,
   employeeTickets
 } = require("../src/DAO/TicketDAO");
+
+jest.mock("fs");
+
+jest.mock("jsonwebtoken", () => ({
+  verify: jest.fn()
+}));
 
 jest.mock("../src/DAO/TicketDAO", () => ({
   updateTicket: jest.fn(),
@@ -86,6 +95,8 @@ describe("Ticket approval/denial functionality tests", () => {
     };
 
     updateTicket.mockResolvedValue(mockResponse);
+    fs.readFileSync.mockReturnValue("valid.jwt.token");
+    jwt.verify.mockReturnValue({ userName: "burak", role: "manager" });
 
     const response = await processTicket(ticket);
 
@@ -101,13 +112,14 @@ describe("Ticket approval/denial functionality tests", () => {
     const ticket = { ticketId: "123", status: "denied" };
 
     updateTicket.mockResolvedValue(false);
+    fs.readFileSync.mockReturnValue("valid.jwt.token");
+    jwt.verify.mockReturnValue({ userName: "burak", role: "manager" });
 
     const response = await processTicket(ticket);
 
     expect(response).toEqual({
       status: 409,
-      message: "Cannot process tickets that have already been approved/denied",
-      updatedTicket: null
+      message: "Cannot process tickets that have already been approved/denied"
     });
     expect(updateTicket).toHaveBeenCalledWith(ticket);
   });
@@ -119,10 +131,22 @@ describe("Ticket approval/denial functionality tests", () => {
 
     expect(response).toEqual({
       status: 400,
-      message: "ticketId needed to process ticket",
-      updatedTicket: null
+      message: "ticketId needed to process ticket"
     });
     expect(updateTicket).not.toHaveBeenCalled();
+  });
+
+  test("should fail due to unauthorized access", async () => {
+    const ticket = { ticketId: "12345", status: "denied" };
+    fs.readFileSync.mockReturnValue("valid.jwt.token");
+    jwt.verify.mockReturnValue({ userName: "burak", role: "employee" });
+
+    const response = await processTicket(ticket);
+
+    expect(response).toEqual({
+      status: 401,
+      message: "Unauthorized access"
+    });
   });
 });
 
@@ -135,6 +159,8 @@ describe("Pending tickets retrieval functionality tests", () => {
     pendingTickets.mockResolvedValue({ Count: 0, Items: [] });
 
     const result = await ticketsPending();
+    fs.readFileSync.mockReturnValue("valid.jwt.token");
+    jwt.verify.mockReturnValue({ userName: "burak", role: "manager" });
 
     expect(result).toEqual({ message: "0 pending" });
   });
@@ -148,6 +174,8 @@ describe("Pending tickets retrieval functionality tests", () => {
       ]
     };
     pendingTickets.mockResolvedValue(mockTickets);
+    fs.readFileSync.mockReturnValue("valid.jwt.token");
+    jwt.verify.mockReturnValue({ userName: "burak", role: "manager" });
 
     const result = await ticketsPending();
 
@@ -156,7 +184,8 @@ describe("Pending tickets retrieval functionality tests", () => {
       pending: [
         { id: "1", status: "pending" },
         { id: "2", status: "pending" }
-      ]
+      ],
+      status: 200
     });
   });
 
@@ -176,11 +205,13 @@ describe("Employee ticket history retrieval functionality tests", () => {
 
   test("should return a message with 0 tickets", async () => {
     employeeTickets.mockResolvedValue({ Count: 0, Items: [] });
+    fs.readFileSync.mockReturnValue("valid.jwt.token");
+    jwt.verify.mockReturnValue({ userName: "burak", role: "employee" });
 
     const mockUserName = "burak";
     const result = await previousTickets(mockUserName);
 
-    expect(result).toEqual({ message: "0 tickets" });
+    expect(result).toEqual({ message: "0 tickets", status: 200 });
   });
 
   test("should return a message with previously submitted tickets", async () => {
@@ -193,6 +224,8 @@ describe("Employee ticket history retrieval functionality tests", () => {
       ]
     };
     employeeTickets.mockResolvedValue(mockTickets);
+    fs.readFileSync.mockReturnValue("valid.jwt.token");
+    jwt.verify.mockReturnValue({ userName: "burak", role: "employee" });
 
     const result = await previousTickets(mockUserName);
 
@@ -201,7 +234,8 @@ describe("Employee ticket history retrieval functionality tests", () => {
       submitted: [
         { id: "1", status: "pending" },
         { id: "2", status: "approved" }
-      ]
+      ],
+      status: 200
     });
   });
 });
