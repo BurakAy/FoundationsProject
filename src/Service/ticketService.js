@@ -12,9 +12,11 @@ const {
 } = require("../DAO/TicketDAO");
 
 async function submitTicket(ticket) {
+  const authorized = await userAuthentication();
+  const userName = authorized;
   const response = { status: null, message: "" };
-  if (ticket.amount && ticket.description && ticket.userName) {
-    const newTicket = await createTicket(ticket);
+  if (ticket.amount && ticket.description && authorized) {
+    const newTicket = await createTicket(ticket, userName);
     if (newTicket == 200) {
       response.status = 200;
       response.message = "Ticket successfully submitted";
@@ -87,8 +89,9 @@ async function ticketsPending() {
   return response;
 }
 
-async function previousTickets(userName) {
-  const authorized = await userAuthentication(userName);
+async function previousTickets() {
+  const authorized = await userAuthentication();
+  const userName = authorized;
   const response = {};
   if (authorized) {
     const tickets = await employeeTickets(userName);
@@ -117,7 +120,7 @@ async function previousTickets(userName) {
   return response;
 }
 
-async function userAuthentication(authType) {
+async function userAuthentication(authType = null) {
   logger.info("Authenticating user");
 
   const token = fs.readFileSync("src/Controller/token.txt", "utf-8");
@@ -128,6 +131,8 @@ async function userAuthentication(authType) {
     userRole.role === authType ? (authorized = true) : null;
   } else if (authType === userRole.userName) {
     authorized = true;
+  } else {
+    return userRole.userName;
   }
 
   return authorized;
