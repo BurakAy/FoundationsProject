@@ -17,10 +17,15 @@ const docClient = DynamoDBDocumentClient.from(client);
 const TableName = "Ticket";
 let ticketId = uuid.v4();
 
-async function createTicket(ticket) {
+async function createTicket(ticket, userName) {
   const command = new PutCommand({
     TableName,
-    Item: { ...ticket, ticketId: ticketId, status: "pending" }
+    Item: {
+      ...ticket,
+      ticketId: ticketId,
+      status: "pending",
+      userName: userName
+    }
   });
   try {
     const response = await docClient.send(command);
