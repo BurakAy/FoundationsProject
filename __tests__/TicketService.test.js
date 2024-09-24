@@ -4,8 +4,7 @@ const {
   submitTicket,
   processTicket,
   ticketsPending,
-  previousTickets,
-  userAuthentication
+  previousTickets
 } = require("../src/Service/TicketService");
 const {
   createTicket,
