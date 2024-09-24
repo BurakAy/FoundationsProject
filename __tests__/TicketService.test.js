@@ -33,11 +33,13 @@ describe("Ticket submission functionality tests", () => {
 
   test("should successfully submit a ticket", async () => {
     const ticket = {
-      userName: "burak",
       amount: 1234.56,
       description: "plane ticket"
     };
+    const userName = "burak";
     createTicket.mockResolvedValue(200);
+    fs.readFileSync.mockReturnValue("valid.jwt.token");
+    jwt.verify.mockReturnValue({ userName: "burak" });
 
     const response = await submitTicket(ticket);
 
@@ -45,12 +47,11 @@ describe("Ticket submission functionality tests", () => {
       status: 200,
       message: "Ticket successfully submitted"
     });
-    expect(createTicket).toHaveBeenCalledWith(ticket);
+    expect(createTicket).toHaveBeenCalledWith(ticket, userName);
   });
 
   test("should fail to submit a ticket due to missing attributes", async () => {
     const ticket = {
-      userName: "burak",
       description: "plane ticket"
     };
 
@@ -58,18 +59,20 @@ describe("Ticket submission functionality tests", () => {
 
     expect(response).toEqual({
       status: 400,
-      message: "Tickets must have an amount, description, and username"
+      message: "Tickets must have an amount and description"
     });
     expect(createTicket).not.toHaveBeenCalled();
   });
 
   test("should fail to submit a ticket when createTicket fails", async () => {
     const ticket = {
-      userName: "burak",
       amount: 1234.56,
       description: "plane ticket"
     };
+    const userName = "burak";
     createTicket.mockResolvedValue(400);
+    fs.readFileSync.mockReturnValue("valid.jwt.token");
+    jwt.verify.mockReturnValue({ userName: "burak" });
 
     const response = await submitTicket(ticket);
 
@@ -77,7 +80,7 @@ describe("Ticket submission functionality tests", () => {
       status: 400,
       message: "Failed to submit ticket"
     });
-    expect(createTicket).toHaveBeenCalledWith(ticket);
+    expect(createTicket).toHaveBeenCalledWith(ticket, userName);
   });
 });
 
