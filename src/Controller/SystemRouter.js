@@ -22,7 +22,6 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/tickets", async (req, res) => {
-  // const tickets = await previousTickets(req.params.userName);
   const tickets = await previousTickets();
   res.status(tickets.status);
   if (tickets.submitted) {
