@@ -29,7 +29,7 @@ async function createTicket(ticket, userName) {
   });
   try {
     const response = await docClient.send(command);
-    logger.info(`Created ticket: ${response}`);
+    logger.info(`Created ticket: ${response.$metadata.httpStatusCode}`);
     return response.$metadata.httpStatusCode;
   } catch (err) {
     logger.error(err);
@@ -53,7 +53,7 @@ async function updateTicket(ticket) {
   });
   try {
     const response = await docClient.send(command);
-    logger.info(`Updated ticket: ${response}`);
+    logger.info(`Updated ticket: ${JSON.stringify(response.Attributes)}`);
     return response;
   } catch (err) {
     if (err instanceof ConditionalCheckFailedException) {

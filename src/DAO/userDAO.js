@@ -49,7 +49,7 @@ async function createAccount(username, pass) {
   });
   try {
     const response = await docClient.send(command);
-    logger.info(`Created a new account: ${response}`);
+    logger.info(`Created a new account`);
     return response;
   } catch (err) {
     if (err instanceof ConditionalCheckFailedException) {
