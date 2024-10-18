@@ -9,6 +9,12 @@ const {
   previousTickets
 } = require("../Service/TicketService");
 
+router.get("/testing", async (req, res) => {
+  const reqBody = req.body.payload ?? "no body sent";
+  res.status(200);
+  res.send(`Success! GET request - ${reqBody}`);
+});
+
 router.post("/register", async (req, res) => {
   const registered = await register(req.body);
   res.status(registered.status);
