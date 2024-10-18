@@ -7,7 +7,7 @@ const {
   processTicket,
   ticketsPending,
   previousTickets
-} = require("../Service/TicketService");
+} = require("../Service/ticketService");
 
 router.get("/testing", async (req, res) => {
   const reqBody = req.body.payload ?? "no body sent";
