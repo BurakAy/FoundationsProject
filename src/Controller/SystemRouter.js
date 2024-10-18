@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { login, register } = require("../Service/UserService");
+const { login, register } = require("../Service/userService");
 const {
   submitTicket,
   processTicket,

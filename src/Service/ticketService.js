@@ -9,7 +9,7 @@ const {
   updateTicket,
   pendingTickets,
   employeeTickets
-} = require("../DAO/TicketDAO");
+} = require("../DAO/ticketDAO");
 
 async function submitTicket(ticket) {
   const authorized = await userAuthentication();

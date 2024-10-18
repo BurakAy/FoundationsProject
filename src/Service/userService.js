@@ -4,7 +4,7 @@ const logger = require("../util/logger");
 const fs = require("fs");
 dotenv.config({ path: "./.env" });
 
-const { userLogin, createAccount } = require("../DAO/UserDAO");
+const { userLogin, createAccount } = require("../DAO/userDAO");
 
 async function login(userCred) {
   const secretKey = process.env.SECRET_KEY;
