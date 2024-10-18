@@ -16,6 +16,7 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+  console.log("logging in...");
   const loggedIn = await login(req.body);
   res.status(loggedIn.status);
   res.send(loggedIn.message);
